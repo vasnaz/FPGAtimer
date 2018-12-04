@@ -4,7 +4,6 @@
 module reaction_main(
   input clock,reset,confirm,morse1,
   output [7:0] an,
-  output led,
   output a, b, c, d, e, f, g, dp
   );
 
