@@ -36,13 +36,8 @@ module segment(
     
     reg newclk;
 
-    always @(posedge clk or posedge reset)
+always @ (*)
 begin
-	 if(reset)
-	 begin
-		timer <= 0;
-	 end
-	else
 	if (timer == 32'd25000000)
 	begin
 		newclk <= 1;
@@ -110,7 +105,9 @@ end
     end
     
     
-
+//output display
+//inputs: morse1, morse2, morse3, morse4, morse5
+//decodes and outputs on 7sed display
     reg [17:0] count;
 always @ (posedge clk) //this will use clk since it needs to go through each an
 begin //really quickly as if all lights are on
@@ -118,52 +115,90 @@ count <= count + 1;
 end
 
 
-
+//outputting to 7seg to each letter
 reg [6:0] sseg;
 always @ (*)
 begin
-case(count[17:16]) //using MSBs so it takes longer to count
-2'b00 :
+case(count[17:15]) //using MSBs so it takes longer to count
+2'b000 :
 begin
-sseg = ones; //this outputs the ones value
-an = 8'b11111110;
+sseg = morse1; //this outputs 1st letter
+an = 8'b01111111;
 end
-2'b01 :
+2'b001 :
 begin
-sseg = tens; //this outputs the tens value
-an = 8'b11111101;
+sseg = morse2; //this outputs 2nd letter
+an = 8'b10111111;
 end
-2'b10 :
+2'b010 :
 begin
-sseg = ones; //this outputs the ones value
-an = 8'b11111110;
+sseg = morse3; //this outputs 3rd letter
+an = 8'b11011111;
 end
-2'b11 :
+2'b011 :
 begin
-sseg = tens; //this outputs the tens value
-an = 8'b11111101;
+sseg = morse4; //this outputs 4th letter
+an = 8'b11101111;
 end
+2'b100 :
+begin
+sseg = morse5; //this outputs 5th letter
+an = 8'b11110111;
+end
+2'b101 :
+begin
+sseg = morse5; //this outputs no value
+an = 8'b11111111;
+end
+2'b110 :
+begin
+sseg = morse5; //this outputs no value
+an = 8'b11111111;
+end
+2'b111 :
+begin
+sseg = morse5; //this outputs no value
+an = 8'b11111111;
+end
+
 endcase
 end
 
     
     
-    
+    //decoder and outputs to 7seg
     always @(*)
     begin
     
     fout = 0;
          case (sseg)
-            4'h0 : fout = 7'h01;
-            4'h1 : fout = 7'h4F;
-            4'h2 : fout = 7'h12;
-            4'h3 : fout = 7'h06;
-            4'h4 : fout = 7'h4C;
-            4'h5 : fout = 7'h24;
-            4'h6 : fout = 7'h20;
-            4'h7 : fout = 7'h0F;
-            4'h8 : fout = 7'h00;
-            4'h9 : fout = 7'h04;
+            16'b0000000000101110 : fout = 7'h08; //a
+            16'b0000001110101010 : fout = 7'h60; //b
+            16'b0000111010111010 : fout = 7'h31; //c
+            16'b0000000011101010 : fout = 7'h42; //d
+            16'b0000000000000010 : fout = 7'h30; //e
+            16'b0000001010111010 : fout = 7'h38; //f
+            16'b0000001110111010 : fout = 7'h04; //g
+            16'b0000000010101010 : fout = 7'h48; //h
+            16'b0000000000001010 : fout = 7'h79; //i
+            16'b0010111011101110 : fout = 7'h47; //j
+            //16'b0000001110101110 : fout = 7'h1C; //k
+            16'b0000001011101010 : fout = 7'h71; //l
+            //16'b0000000011101110 : fout = 7'h01; //m
+            16'b0000000000111010 : fout = 7'h6A; //n
+            16'b0000111011101110 : fout = 7'h62; //o
+            16'b0000001011101110 : fout = 7'h18; //p
+            //16'b0011101110101110 : fout = 7'h0C; //q
+            16'b0000000010111010 : fout = 7'h7A; //r
+            16'b0000000000101010 : fout = 7'h24; //s
+            16'b0000000000001110 : fout = 7'h70; //t
+            16'b0000000010101110 : fout = 7'h41; //u
+            //16'b0000001010101110 : fout = 7'h01; //v
+            //16'b0000001011101110 : fout = 7'h01; //w
+            //16'b0000111010101110 : fout = 7'h01; //x
+            16'b0011101011101110 : fout = 7'h44; //y
+            //16'b0000111011101010 : fout = 7'h01; //z
+
         endcase
     
     end
